@@ -5,9 +5,14 @@
 #include <stdlib.h>
 #include <time.h>
 
+Mover *mvs[20];
+
 int main(int argc, char *argv[]) {
+  int i;
   rnd_Seed(time(NULL), 33);
-  Mover *mover = NewMover(800, 600);
+  for (i = 0; i < 20; i++) {
+    mvs[i] = NewMover(800, 600);
+  }
   sgi_Init(800, 600, "Mover Test");
   Vec2D pt = {400, 300};
   int x, y;
@@ -15,12 +20,16 @@ int main(int argc, char *argv[]) {
     sgi_Clear(RGB_Black);
     sgi_GetMouseState(&x, &y);
     pt = (Vec2D){(float)x, (float)y};
-    mover->Update(mover, &pt);
-    sgi_Disk((int)mover->location.x, (int)mover->location.y, 10, RGB_Green);
+    for (i = 0; i < 20; i++) {
+      mvs[i]->Update(mvs[i], &pt);
+      sgi_Disk((int)mvs[i]->location.x, (int)mvs[i]->location.y, 10, RGB_Green);
+    }
     sgi_Update();
     sgi_Delay(16);
   }
-  mover->Destroy(mover);
+  for (i = 0; i < 20; i++) {
+    mvs[i]->Destroy(mvs[i]);
+  }
   sgi_Fini();
   return 0;
 }
