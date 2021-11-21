@@ -187,5 +187,15 @@ Vec2_t Vec2_MoveTowards(Vec2_t v, Vec2_t target, float maxDistance) {
 
   return result;
 }
-
+Vec2_t Vec2_Limit(Vec2_t v, float n) {
+  Vec2_t rv;
+  rv.x = v.x;
+  rv.y = v.y;
+  float l = Vec2_Length(v);
+  if (n <= l) {
+    float ra = n / l;
+    rv = Vec2_Scale(v, ra);
+  }
+  return rv;
+}
 #endif // header guard

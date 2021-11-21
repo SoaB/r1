@@ -1,46 +1,48 @@
-#ifndef HEADER_ECDD855FAF0523A5
-#define HEADER_ECDD855FAF0523A5
+#ifndef __MOVER_H__
+#define __MOVER_H__
 
 #include "rnd.h"
-#include "simplexNoise.h"
 #include "vector2.h"
+#include <stdbool.h>
+#include <stdint.h>
 #include <stdlib.h>
 
-typedef struct RndWalker_t {
-  Vec2_t Posi;
-  void (*Update)(struct RndWalker_t *self);
-  void (*Destroy)(struct RndWalker_t *self);
-} RndWalker_t;
+typedef struct Mover {
+  Vec2_t location;
+  Vec2_t velocity;
+  Vec2_t acceleration;
+  float topSpeed;
+  void (*Update)(struct Mover *self, Vec2_t *pt);
+  void (*Destroy)(struct Mover *self);
+} Mover;
 
-static float scaleVal(float n, float min, float max, float range) {
-  float scale = range / (max - min);
-  float offset = min * scale;
-  return (n * scale - offset);
+static void _update(Mover *mv, Vec2_t *pt) {
+  Vec2_t dir = Vec2_Subtract(*pt, mv->location);
+  dir = Vec2_Normalize(dir);
+  dir = Vec2_Scale(dir, 0.5);
+  mv->acceleration.x = dir.x;
+  mv->acceleration.y = dir.y;
+  mv->velocity = Vec2_Add(mv->velocity, mv->acceleration);
+  mv->velocity = Vec2_Limit(mv->velocity, mv->topSpeed);
+  mv->location = Vec2_Add(mv->location, mv->velocity);
 }
-
-static void rw_update(RndWalker_t *walker) {
-  static float tx = 0;
-  static float ty = 1000;
-  walker->Posi.x = scaleVal(snoise1(tx), -1, 1, 800);
-  walker->Posi.y = scaleVal(snoise1(ty), -1, 1, 600);
-  tx += 0.01;
-  ty += 0.02;
-}
-static void rw_destroy(RndWalker_t *self) {
+static void _destroy(Mover *self) {
   if (self != NULL) {
     free(self);
     self = NULL;
   }
 }
-RndWalker_t *NewRndWalker(float x, float y) {
-  RndWalker_t *rw = malloc(sizeof(rw));
-  if (rw != NULL) {
-    rw->Update = &rw_update;
-    rw->Destroy = &rw_destroy;
-    rw->Posi.x = x;
-    rw->Posi.y = y;
+Mover *NewMover(int w, int h) {
+  Mover *mv = (Mover *)malloc(sizeof(Mover));
+  if (mv != NULL) {
+    mv->location = (Vec2_t){(float)rnd_R32n(0, w), (float)rnd_R32n(0, h)};
+    mv->velocity = (Vec2_t){0, 0};
+    mv->acceleration = (Vec2_t){0, 0};
+    mv->topSpeed = 4;
+    mv->Update = &_update;
+    mv->Destroy = &_destroy;
   }
-  return rw;
+  return mv;
 }
 
 #endif // header guard

@@ -63,7 +63,7 @@ int sgi_Mode_Add();
 int sgi_Mode_Mod();
 void sgi_Update();
 void sgi_ReadKeys();
-void sgi_GetMouseState();
+void sgi_GetMouseState(int *x, int *y);
 unsigned long sgi_GetTicks();
 void sgi_Delay(int ms);
 bool sgi_Done(void);
@@ -139,8 +139,10 @@ void sgi_ReadKeys() {
   sgi.inkeys = SDL_GetKeyboardState(NULL);
 }
 ////////////////////////////////////////////////////////////////////////////////////
-void sgi_GetMouseState() {
+void sgi_GetMouseState(int *x, int *y) {
   uint8_t mouseState = SDL_GetMouseState(&sgi.mouseX, &sgi.mouseY);
+  *x = sgi.mouseX;
+  *y = sgi.mouseY;
   if (mouseState & 1)
     sgi.LMB = true;
   else

@@ -1,4 +1,4 @@
-#include "randomWalker.h"
+#include "Mover.h"
 #include "rnd.h"
 #include "sgi.h"
 #include "vector2.h"
@@ -6,17 +6,21 @@
 #include <time.h>
 
 int main(int argc, char *argv[]) {
-  RndWalker_t *walker = NewRndWalker(400, 300);
-  sgi_Init(800, 600, "Vector Test");
   rnd_Seed(time(NULL), 33);
+  Mover *mover = NewMover(800, 600);
+  sgi_Init(800, 600, "Mover Test");
+  Vec2_t pt = {400, 300};
+  int x, y;
   while (!sgi_Done()) {
     sgi_Clear(RGB_Black);
-    walker->Update(walker);
-    sgi_Disk((int)walker->Posi.x, (int)walker->Posi.y, 10, RGB_Green);
+    sgi_GetMouseState(&x, &y);
+    pt = (Vec2_t){(float)x, (float)y};
+    mover->Update(mover, &pt);
+    sgi_Disk((int)mover->location.x, (int)mover->location.y, 10, RGB_Green);
     sgi_Update();
     sgi_Delay(16);
   }
-  walker->Destroy(walker);
+  mover->Destroy(mover);
   sgi_Fini();
   return 0;
 }
