@@ -6,7 +6,6 @@
 #include "vector2.h"
 #include <stdlib.h>
 
-
 typedef struct RndWalker_t {
   Vec2_t Posi;
   void (*Update)(struct RndWalker_t *self);
