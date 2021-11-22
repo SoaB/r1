@@ -14,6 +14,9 @@ typedef struct Vec2D {
 */
 Vec2D V2D_Zero(void);
 Vec2D V2D_One(void);
+int V2D_Equal(Vec2D v1, Vec2D v2);
+Vec2D V2D_Set(float x, float y);
+Vec2D V2D_Clone(Vec2D v);
 Vec2D V2D_Add(Vec2D v1, Vec2D v2);
 Vec2D V2D_AddValue(Vec2D v, float add);
 Vec2D V2D_Subtract(Vec2D v1, Vec2D v2);
@@ -43,6 +46,21 @@ Vec2D V2D_Zero(void) {
 Vec2D V2D_One(void) {
   Vec2D result = {1.0f, 1.0f};
 
+  return result;
+}
+int V2D_Equal(Vec2D v1, Vec2D v2) {
+  if (v1.x == v2.x && v1.y == v2.y)
+    return 1;
+  else
+    return 0;
+}
+Vec2D V2D_Set(float x, float y) {
+  Vec2D result = {x, y};
+  return result;
+}
+
+Vec2D V2D_Clone(Vec2D v) {
+  Vec2D result = {v.x, v.y};
   return result;
 }
 
@@ -191,10 +209,11 @@ Vec2D V2D_Limit(Vec2D v, float n) {
   Vec2D rv;
   rv.x = v.x;
   rv.y = v.y;
-  float l = V2D_Length(v);
+  float l = sqrtf((v.x * v.x) + (v.y * v.y));
   if (n <= l) {
     float ra = n / l;
-    rv = V2D_Scale(v, ra);
+    rv.x = rv.x * ra;
+    rv.y = rv.y * ra;
   }
   return rv;
 }

@@ -22,7 +22,8 @@ int main(int argc, char *argv[]) {
     pt = (Vec2D){(float)x, (float)y};
     for (i = 0; i < 20; i++) {
       mvs[i]->Update(mvs[i], &pt);
-      sgi_Disk((int)mvs[i]->location.x, (int)mvs[i]->location.y, 10, RGB_Green);
+      mvs[i]->ChkEdge(mvs[i], 800, 600);
+      sgi_Disk((int)mvs[i]->location.x, (int)mvs[i]->location.y, 8, RGB_Green);
     }
     sgi_Update();
     sgi_Delay(16);
